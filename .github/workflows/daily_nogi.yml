@@ -1,0 +1,30 @@
+name: Daily Nogizaka Schedule
+
+on:
+  schedule:
+    # 毎日 21:00 (日本時間) に実行
+    # UTC（世界標準時）なので 9時間引いて 12:00 に設定
+    - cron: "0 15 * * *"
+  workflow_dispatch: # 手動で実行ボタンを押せるようにする
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Install dependencies
+        run: |
+          pip install line-bot-sdk requests beautifulsoup4
+
+      - name: Run script
+        env:
+          LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
+          LINE_USER_ID: ${{ secrets.LINE_USER_ID }}
+        run: python nogi_line.py
