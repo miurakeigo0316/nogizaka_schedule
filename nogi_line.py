@@ -10,7 +10,8 @@ from bs4 import BeautifulSoup
 # import pandas as pd
 import datetime
 
-# import re
+import re
+
 # import time as tm
 from linebot import LineBotApi
 from linebot.models import TextSendMessage
@@ -102,53 +103,56 @@ finally:
 
 
 # --- Googleカレンダー用CSV出力 ---
-# if all_data:
-#     gcal_data = []
-#     for item in all_data:
-#         # 日付の整形 (例: "15(月)" -> "2026/03/15")
-#         day_only = item["日付"].split('(')[0]
-#         start_date = f"{year}/{month}/{day_only}"
+if all_data:
+    gcal_data = []
+    for item in all_data:
+        # 日付の整形 (例: "15(月)" -> "2026/03/15")
+        day_only = item["日付"].split("(")[0]
+        start_date = f"{year}/{month}/{day_only}"
 
-#         subject = f"[{item['媒体']}] {item['タイトル']}"
-#         raw_time = item["時間"] # 例: "19:00" または "19:00～20:00"
+        subject = f"[{item['媒体']}] {item['タイトル']}"
+        raw_time = item["時間"]  # 例: "19:00" または "19:00～20:00"
 
-#         start_time = ""
-#         end_time = ""
-#         all_day = "True"
+        start_time = ""
+        end_time = ""
+        all_day = "True"
 
-#         if raw_time:
-#             # 「数字:数字」のパターンをすべて抜き出す
-#             # これにより、記号が何であっても「19:00」と「20:00」をリストとして取得できる
-#             time_matches = re.findall(r'\d{1,2}:\d{2}', raw_time)
+        if raw_time:
+            # 「数字:数字」のパターンをすべて抜き出す
+            # これにより、記号が何であっても「19:00」と「20:00」をリストとして取得できる
+            time_matches = re.findall(r"\d{1,2}:\d{2}", raw_time)
 
-
-#             if len(time_matches) >= 2:
-#                 # 開始と終了が分かれた場合
-#                 start_time = time_matches[0]
-#                 end_time = time_matches[1]
-#                 all_day = "False"
-#             elif len(time_matches) == 1:
-#                 # 開始時間しかない場合
-#                 start_time = time_matches[0]
-#                 all_day = "False"
-#                 try:
-#                     h, m = map(int, start_time.split(':'))
-#                     # 24時超えも考慮
-#                     end_dt = datetime.datetime(2000, 1, 1, h % 24, m) + datetime.timedelta(hours=1)
-#                     end_time = end_dt.strftime("%H:%M")
-#                 except:
-#                     end_time = start_time
-#         else:
-#             all_day = "True"
-#         gcal_data.append({
-#             "Subject": subject,
-#             "Start Date": start_date,
-#             "Start Time": start_time,
-#             "End Date": start_date,
-#             "End Time": end_time,
-#             "All Day Event": all_day,
-#             "Description": item['媒体']
-#         })
+            if len(time_matches) >= 2:
+                # 開始と終了が分かれた場合
+                start_time = time_matches[0]
+                end_time = time_matches[1]
+                all_day = "False"
+            elif len(time_matches) == 1:
+                # 開始時間しかない場合
+                start_time = time_matches[0]
+                all_day = "False"
+                try:
+                    h, m = map(int, start_time.split(":"))
+                    # 24時超えも考慮
+                    end_dt = datetime.datetime(
+                        2000, 1, 1, h % 24, m
+                    ) + datetime.timedelta(hours=1)
+                    end_time = end_dt.strftime("%H:%M")
+                except:
+                    end_time = start_time
+        else:
+            all_day = "True"
+        gcal_data.append(
+            {
+                "Subject": subject,
+                "Start Date": start_date,
+                "Start Time": start_time,
+                "End Date": start_date,
+                "End Time": end_time,
+                "All Day Event": all_day,
+                "Description": item["媒体"],
+            }
+        )
 
 #     # CSV出力（以下は前回と同じ）
 #     # --- Googleカレンダー用CSV出力 ---
@@ -171,8 +175,6 @@ finally:
 
 
 # --- Googleカレンダー登録処理 ---
-
-# 冒頭に追加
 
 
 def register_to_google_calendar(service, gcal_data):
@@ -275,8 +277,9 @@ def register_to_google_calendar(service, gcal_data):
         except Exception as e:
             print(f"× エラー: {data['Subject']} - {e}")
 
+    # 実行
 
-# 実行
+
 # register_to_google_calendar(service, gcal_data)
 
 
@@ -352,4 +355,6 @@ def send_line_message_api(gcal_data):
         print(f"送信エラー: {e}")
 
     # 実行
-    send_line_message_api(gcal_data)
+
+
+send_line_message_api(gcal_data)
