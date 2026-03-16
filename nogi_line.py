@@ -38,6 +38,14 @@ options.add_argument("--headless")  # 必須：画面なしで動かす
 options.add_argument("--no-sandbox")  # 必須：セキュリティ制限を回避
 options.add_argument("--disable-dev-shm-usage")  # 必須：メモリ不足エラーを回避
 options.add_argument("--lang=ja-JP")
+
+# 2. 「私は日本語のページを希望します」という情報をブラウザに持たせる
+options.add_experimental_option("prefs", {"intl.accept_languages": "ja,ja-JP"})
+
+# 3. ユーザーエージェント（ブラウザの種類）を日本のPCっぽく見せる
+options.add_argument(
+    "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+)
 options.set_capability("goog:loggingPrefs", {"performance": "ALL"})
 
 # 2. 設定を渡して起動する
