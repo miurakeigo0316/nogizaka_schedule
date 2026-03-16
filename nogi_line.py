@@ -37,6 +37,8 @@ options = Options()
 options.add_argument("--headless")  # 必須：画面なしで動かす
 options.add_argument("--no-sandbox")  # 必須：セキュリティ制限を回避
 options.add_argument("--disable-dev-shm-usage")  # 必須：メモリ不足エラーを回避
+options.add_argument("--lang=ja-JP")
+options.set_capability("goog:loggingPrefs", {"performance": "ALL"})
 
 # 2. 設定を渡して起動する
 driver = webdriver.Chrome(
@@ -44,7 +46,7 @@ driver = webdriver.Chrome(
 )
 
 # URLにクエリパラメータを正しく渡す
-url = f"https://www.nogizaka46.com/s/n46/media/list?ima=1000&dy={year}{month}"
+url = f"https://www.nogizaka46.com/s/n46/media/list?ima=1000&dy={year}{month}&lang=ja"
 driver.get(url)
 
 all_data = []
