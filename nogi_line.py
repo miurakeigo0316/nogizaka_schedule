@@ -330,15 +330,18 @@ def send_line_message_api(gcal_data):
     msg_text = f"【明日 {tomorrow_dt.strftime('%m/%d')} の乃木坂46】\n"
 
     found_count = 0
+    # send_line_message_api 関数の中をチェック
+
     for data in gcal_data:
         event_date = data["Start Date"].replace("/", "-")
         if event_date == tomorrow_str:
             found_count += 1
             time_str = "終日" if data["All Day Event"] == "True" else data["Start Time"]
-            # 推しメン（池田瑛紗さん等）がいれば目立たせる工夫
-            subject = data["Subject"]
+            subject = data["Subject"]  # ← ここ！直接取り出せば日本語になります
+
+            # 推しメン判定
             if "柴田柚菜" in data["Description"] or "柴田柚菜" in subject:
-                subject = f"🥜✈【推し】{subject}"
+                subject = f" 🥜 ✈【推し】{subject}"
 
             msg_text += f"\n・{time_str}〜\n  {subject}\n"
 
