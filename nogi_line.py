@@ -158,7 +158,8 @@ finally:
 #     filename_csv = "gcal_import_now.csv"
 
 #     # 2. カラム順を整理
-#     columns = ["Subject", "Start Date", "Start Time", "End Date", "End Time", "All Day Event", "Description"]
+#     columns = ["Subject", "Start Date", "Start Time", "End Date", "End Time",
+# "All Day Event", "Description"]
 
 #     # mode='w' (writeモード) はデフォルトですが、明示的に上書きを指定
 #     # encoding='utf-8-sig' はExcelで文字化けさせないため
@@ -308,7 +309,7 @@ def print_tomorrow_schedule(gcal_data):
 
 
 # 実行
-print_tomorrow_schedule(gcal_data)
+# print_tomorrow_schedule(gcal_data)
 
 
 def send_line_message_api(gcal_data):
@@ -350,6 +351,5 @@ def send_line_message_api(gcal_data):
     except Exception as e:
         print(f"送信エラー: {e}")
 
-
-# 実行
-send_line_message_api(gcal_data)
+    # 実行
+    send_line_message_api(gcal_data)
