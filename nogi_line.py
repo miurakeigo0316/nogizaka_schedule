@@ -2,11 +2,16 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
-import pandas as pd
+
+# import pandas as pd
 import datetime
-import re
-import time as tm
+
+# import re
+# import time as tm
 from linebot import LineBotApi
 from linebot.models import TextSendMessage
 import os
@@ -25,7 +30,17 @@ if not CHANNEL_ACCESS_TOKEN or not USER_ID:
     print("Error: LINE_CHANNEL_ACCESS_TOKEN or LINE_USER_ID is not set.")
     sys.exit(1)
 
-driver = webdriver.Chrome()
+
+# 1. ヘッドレスモード（画面を出さない設定）を作る
+options = Options()
+options.add_argument("--headless")  # 必須：画面なしで動かす
+options.add_argument("--no-sandbox")  # 必須：セキュリティ制限を回避
+options.add_argument("--disable-dev-shm-usage")  # 必須：メモリ不足エラーを回避
+
+# 2. 設定を渡して起動する
+driver = webdriver.Chrome(
+    service=Service(ChromeDriverManager().install()), options=options
+)
 
 # URLにクエリパラメータを正しく渡す
 url = f"https://www.nogizaka46.com/s/n46/media/list?ima=1000&dy={year}{month}"
