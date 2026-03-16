@@ -12,8 +12,10 @@ from linebot.models import TextSendMessage
 import os
 import sys
 
-year = input("年 (例: 2024): ")
-month = input("月 (例: 05): ")
+# year = input("年 (例: 2024): ")
+# month = input("月 (例: 05): ")
+year = "2026"
+month = "03"
 
 CHANNEL_ACCESS_TOKEN = os.environ.get("LINE_CHANNEL_ACCESS_TOKEN")
 USER_ID = os.environ.get("LINE_USER_ID")
