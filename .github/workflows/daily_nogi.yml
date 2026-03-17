@@ -2,9 +2,9 @@ name: Daily Nogizaka Schedule
 
 on:
   schedule:
-    # 毎日 21:00 (日本時間) に実行
-    # UTC（世界標準時）なので 9時間引いて 12:00 に設定
-    - cron: "0 15 * * *"
+    # 毎日 25:30 (日本時間) に実行
+    # UTC（世界標準時）なので 9時間引いて 16:30 に設定
+    - cron: "33 16 * * *"
   workflow_dispatch: # 手動で実行ボタンを押せるようにする
 
 jobs:
