@@ -36,6 +36,11 @@ if os.path.exists(LAST_TITLE_FILE):
 options = Options()
 options.add_argument("--headless")
 options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
+# ブラウザの言語を日本語に強制設定
+options.add_argument("--lang=ja-JP")
+options.add_experimental_option("prefs", {"intl.accept_languages": "ja"})
+
 driver = webdriver.Chrome(
     service=Service(ChromeDriverManager().install()), options=options
 )
@@ -85,8 +90,8 @@ try:
         )
 
         # 文字数オーバー対策（念のため）
-        if len(combined_message) > 4000:
-            combined_message = combined_message[:3900] + "\n...以下省略"
+        if len(combined_message) > 4500:
+            combined_message = combined_message[:4400] + "\n...以下省略"
 
         with ApiClient(configuration) as api_client:
             line_bot_api = MessagingApi(api_client)
