@@ -2,7 +2,7 @@ name: Nogizaka News Bot
 
 on:
   schedule:
-    - cron: "0 */6 * * *" # 30分おきにチェック
+    - cron: "0 3,15 * * *" # 12時間ごとに実行
   workflow_dispatch:
 
 jobs:
