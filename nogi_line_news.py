@@ -77,7 +77,7 @@ try:
             pass
 
         content = news.find("p", {"class": "cat_name"}).text.strip()
-        link = "https://www.nogizaka46.com" + news.find("a")["href"]
+        link = news.find("a")["href"]
 
         new_messages.append(
             f"【乃木坂46 新着】\n\n📅 {date_str}\n🏷 {content}\n📢 {title}\n🔗 {link}"
