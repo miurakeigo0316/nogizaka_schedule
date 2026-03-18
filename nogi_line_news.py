@@ -47,7 +47,7 @@ driver = webdriver.Chrome(
 
 try:
     driver.get("https://www.nogizaka46.com/s/n46/news/list?ima=1000")
-    time.sleep(3)  # 読み込み待機
+    time.sleep(10)  # 読み込み待機
     soup = BeautifulSoup(driver.page_source, "html.parser")
     news_items = soup.find_all("li", {"class": "newsItem"})
 
