@@ -84,10 +84,18 @@ try:
         )
 
     if new_messages:
-        # 古い順に並び替えて、区切り線で合体させる
-        combined_message = "【乃木坂46 新着まとめ】\n" + "\n\n---\n\n".join(
-            reversed(new_messages)
+        # 最新の5件だけに絞る
+        latest_5_posts = new_messages[:5]
+
+        # LINEで読みやすいように「古い順」に並べて合体（一番下が最新になる）
+        # もし一番上を最新にしたい場合は reversed() を外して latest_5_posts をそのまま使う
+        combined_message = "【乃木坂46 新着まとめ (最新5件)】\n\n" + "\n\n---\n\n".join(
+            reversed(latest_5_posts)
         )
+        # # 古い順に並び替えて、区切り線で合体させる
+        # combined_message = "【乃木坂46 新着まとめ】\n" + "\n\n---\n\n".join(
+        #     reversed(new_messages)
+        # )
 
         # 文字数オーバー対策（念のため）
         if len(combined_message) > 4500:
