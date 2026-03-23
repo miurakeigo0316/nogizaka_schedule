@@ -16,7 +16,8 @@ import re
 from linebot import LineBotApi
 from linebot.models import TextSendMessage
 import os
-import sys
+
+# import sys
 
 import gspread
 from google.oauth2.service_account import Credentials
@@ -31,10 +32,8 @@ def get_settings_from_sheet():
     client = gspread.authorize(creds)
 
     # スプレッドシートを開く（URLまたはタイトルで指定）
-    # ※スプレッドシートのURLから ID（d/〜/editの間）をコピーして貼り付けてください
-    sheet = client.open_by_key(
-        "1UVIyyzNLcigP-NvVHJAHY4Z-jReWMdl0HUzul6vi7FA"
-    ).worksheet("settings")
+    spreadsheet_id = os.environ.get("SPREADSHEET_ID")
+    sheet = client.open_by_key(spreadsheet_id).worksheet("settings")
 
     # 全データを取得
     data = sheet.get_all_records()

@@ -30,7 +30,7 @@ def get_settings_from_sheet():
     client = gspread.authorize(creds)
 
     # スプレッドシートを開く（IDを書き換えてください）
-    spreadsheet_id = "1UVIyyzNLcigP-NvVHJAHY4Z-jReWMdl0HUzul6vi7FA"
+    spreadsheet_id = os.environ.get("SPREADSHEET_ID")
     sheet = client.open_by_key(spreadsheet_id).worksheet("settings")
 
     data = sheet.get_all_records()
