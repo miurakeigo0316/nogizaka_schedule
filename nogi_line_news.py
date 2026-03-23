@@ -45,8 +45,8 @@ def get_settings_from_sheet():
 
 
 settings = get_settings_from_sheet()
-CHANNEL_ACCESS_TOKEN = settings["token"]
-USER_ID = settings["dest_list"]
+CHANNEL_ACCESS_TOKEN = settings.get("token")
+USER_ID = settings.get("dest_list")
 LAST_TITLE_FILE = "last_title.txt"
 
 configuration = Configuration(access_token=CHANNEL_ACCESS_TOKEN)
