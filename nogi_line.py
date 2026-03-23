@@ -210,7 +210,9 @@ if all_data:
 
 def register_to_google_calendar(service, gcal_data):
     # 【重要】ここに新しいカレンダーIDを貼り付けてください
-    target_id = os.environ.get("GOOGLE_CALENDAR_ID")
+    target_id = os.environ.get(
+        "e78ce2e0edb49dc492d50f1ca55598c7e5d4d9a4edb72c943ddc2ab0396bc667@group.calendar.google.com"
+    )
     # --- 1. 既存の予定をリストアップ ---
     # 過去7日から未来30日分を取得（深夜番組や日付変更のズレを確実にカバー）
     time_min = (
@@ -348,9 +350,13 @@ def print_tomorrow_schedule(gcal_data):
 
 def send_line_message_api(gcal_data, settings):
     # --- 設定（LINE Developersから取得した値を入力） ---
-    token = settings["token"]
-    dest_list = settings["dest_list"]
-    push_members = settings["members"]
+    # token = settings["token"]
+    # dest_list = settings["dest_list"]
+    # push_members = settings["members"]
+
+    token = settings.get("token")
+    dest_list = settings.get("dest_list")
+    push_members = settings.get("members", {})
 
     if not token or not dest_list:
         print("エラー: LINEトークンまたは宛先がスプレッドシートにありません。")
