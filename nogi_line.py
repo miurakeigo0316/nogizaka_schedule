@@ -379,6 +379,8 @@ def send_line_message_api(gcal_data, settings):
 
     for data in gcal_data:
         event_date = data["Start Date"].replace("/", "-")
+        print(f"比較中: データの付({event_date}) vs 明日の日付({tomorrow_str})")
+
         if event_date == tomorrow_str:
             found_count += 1
             time_str = "終日" if data["All Day Event"] == "True" else data["Start Time"]
