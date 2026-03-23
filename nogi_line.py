@@ -49,15 +49,6 @@ def get_settings_from_sheet():
     return settings
 
 
-CHANNEL_ACCESS_TOKEN = os.environ.get("LINE_CHANNEL_ACCESS_TOKEN")
-USER_ID = os.environ.get("LINE_USER_ID")
-
-# 万が一Secretが設定されていない場合にエラーで止める
-if not CHANNEL_ACCESS_TOKEN or not USER_ID:
-    print("Error: LINE_CHANNEL_ACCESS_TOKEN or LINE_USER_ID is not set.")
-    sys.exit(1)
-
-
 # 1. ヘッドレスモード（画面を出さない設定）を作る
 options = Options()
 options.add_argument("--headless")  # 必須：画面なしで動かす
@@ -365,7 +356,7 @@ def send_line_message_api(gcal_data, settings):
         print("エラー: LINEトークンまたは宛先がスプレッドシートにありません。")
         return
 
-    line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
+    line_bot_api = LineBotApi(token)
 
     # 1. 明日の日付を取得
     tomorrow_dt = datetime.date.today() + datetime.timedelta(days=1)
