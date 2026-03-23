@@ -131,12 +131,19 @@ try:
 
         with ApiClient(configuration) as api_client:
             line_bot_api = MessagingApi(api_client)
-            line_bot_api.push_message(
-                PushMessageRequest(
-                    to=USER_ID, messages=[TextMessage(text=combined_message)]
-                )
-            )
-            print("まとめメッセージを送信しました。")
+
+            # リスト（USER_ID）の中身を一人ずつループして送る
+            for target_id in USER_ID:
+                try:
+                    line_bot_api.push_message(
+                        PushMessageRequest(
+                            to=target_id,  # ここをループの変数に変える
+                            messages=[TextMessage(text=combined_message)],
+                        )
+                    )
+                    print(f"送信成功: {target_id}")
+                except Exception as e:
+                    print(f"送信失敗 ({target_id}): {e}")
 
     # 最新タイトルを保存して終了
     if current_latest_title:
