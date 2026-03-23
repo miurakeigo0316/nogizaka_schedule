@@ -18,10 +18,36 @@ from linebot.models import TextSendMessage
 import os
 import sys
 
-# year = input("年 (例: 2024): ")
-# month = input("月 (例: 05): ")
-year = "2026"
-month = "03"
+import gspread
+from google.oauth2.service_account import Credentials
+import json
+
+
+def get_settings_from_sheet():
+    # GitHub Secret から JSON 鍵を取得
+    service_account_info = json.loads(os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON"))
+    scopes = ["https://www.googleapis.com/auth/spreadsheets"]
+    creds = Credentials.from_service_account_info(service_account_info, scopes=scopes)
+    client = gspread.authorize(creds)
+
+    # スプレッドシートを開く（URLまたはタイトルで指定）
+    # ※スプレッドシートのURLから ID（d/〜/editの間）をコピーして貼り付けてください
+    sheet = client.open_by_key(
+        "1UVIyyzNLcigP-NvVHJAHY4Z-jReWMdl0HUzul6vi7FA"
+    ).worksheet("settings")
+
+    # 全データを取得
+    data = sheet.get_all_records()
+
+    # 整理して返す
+    settings = {
+        "token": next(d["内容1"] for d in data if d["項目"] == "LINE_TOKEN"),
+        # LINE_DEST の行から「内容1」をすべてリストで取る（複数対応）
+        "dest_list": [d["内容1"] for d in data if d["項目"] == "LINE_DEST"],
+        "members": {d["内容1"]: d["内容2"] for d in data if d["項目"] == "PUSH_MEMBER"},
+    }
+    return settings
+
 
 CHANNEL_ACCESS_TOKEN = os.environ.get("LINE_CHANNEL_ACCESS_TOKEN")
 USER_ID = os.environ.get("LINE_USER_ID")
@@ -52,6 +78,10 @@ options.set_capability("goog:loggingPrefs", {"performance": "ALL"})
 driver = webdriver.Chrome(
     service=Service(ChromeDriverManager().install()), options=options
 )
+
+today = datetime.date.today()
+year = today.strftime("%Y")
+month = today.strftime("%m")
 
 # URLにクエリパラメータを正しく渡す
 url = f"https://www.nogizaka46.com/s/n46/media/list?ima=1000&dy={year}{month}&lang=ja"
@@ -325,10 +355,15 @@ def print_tomorrow_schedule(gcal_data):
 # print_tomorrow_schedule(gcal_data)
 
 
-def send_line_message_api(gcal_data):
+def send_line_message_api(gcal_data, settings):
     # --- 設定（LINE Developersから取得した値を入力） ---
-    CHANNEL_ACCESS_TOKEN = os.environ.get("LINE_CHANNEL_ACCESS_TOKEN")
-    USER_ID = os.environ.get("LINE_USER_ID")
+    token = settings["token"]
+    dest_list = settings["dest_list"]
+    push_members = settings["members"]
+
+    if not token or not dest_list:
+        print("エラー: LINEトークンまたは宛先がスプレッドシートにありません。")
+        return
 
     line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
 
@@ -348,10 +383,20 @@ def send_line_message_api(gcal_data):
             found_count += 1
             time_str = "終日" if data["All Day Event"] == "True" else data["Start Time"]
             subject = data["Subject"]  # ← ここ！直接取り出せば日本語になります
+            description = data["Description"]
 
             # 推しメン判定
-            if "柴田柚菜" in data["Description"] or "柴田柚菜" in subject:
-                subject = f" 🥜 ✈【推し】{subject}"
+            matched_emoji = ""
+            # スプレッドシートから取得したメンバーリストを1人ずつチェック
+            for name, emoji in push_members.items():
+                # 名前（漢字）が含まれているかチェック
+                if name in description or name in subject:
+                    matched_emoji = emoji
+                    break  # 1人見つかったらその人の絵文字を採用してループを抜ける
+
+            # もし誰かに該当したらマークを付ける
+            if matched_emoji:
+                subject = f"{matched_emoji}【推し】{subject}"
 
             msg_text += f"\n・{time_str}〜\n  {subject}\n"
 
@@ -360,14 +405,30 @@ def send_line_message_api(gcal_data):
     else:
         msg_text += f"\n計 {found_count} 件"
 
+    for user_id in dest_list:
+        try:
+            line_bot_api.push_message(user_id, TextSendMessage(text=msg_text))
+            print(f"送信完了: {user_id}")
+        except Exception as e:
+            print(f"送信失敗 ({user_id}): {e}")
+
     # 3. 送信実行
+
+
+if __name__ == "__main__":
     try:
-        line_bot_api.push_message(USER_ID, TextSendMessage(text=msg_text))
-        print("Messaging APIで送信完了！")
+        # スプレッドシートから設定を取得
+        app_settings = get_settings_from_sheet()
+
+        # gcal_data（スクレイピング結果）がある場合のみ送信
+        # ※スクレイピング部分のコードがこの前に必要です
+        if "gcal_data" in locals() or "gcal_data" in globals():
+            send_line_message_api(gcal_data, app_settings)
+        else:
+            print("エラー: gcal_data が定義されていません。")
+
     except Exception as e:
-        print(f"送信エラー: {e}")
-
-    # 実行
+        print(f"システム実行エラー: {e}")
 
 
-send_line_message_api(gcal_data)
+# send_line_message_api(gcal_data)
