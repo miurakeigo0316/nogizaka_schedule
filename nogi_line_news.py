@@ -6,6 +6,10 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
+import gspread
+import json
+from google.oauth2.service_account import Credentials
+
 
 # LINE v3 SDK
 from linebot.v3.messaging import (
@@ -16,9 +20,33 @@ from linebot.v3.messaging import (
     TextMessage,
 )
 
+
 # --- 設定 ---
-CHANNEL_ACCESS_TOKEN = os.environ["LINE_CHANNEL_ACCESS_TOKEN"]
-USER_ID = os.environ["LINE_USER_ID"]
+def get_settings_from_sheet():
+    # GitHub Secretに保存したJSON鍵を読み込み
+    service_account_info = json.loads(os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON"))
+    scopes = ["https://www.googleapis.com/auth/spreadsheets"]
+    creds = Credentials.from_service_account_info(service_account_info, scopes=scopes)
+    client = gspread.authorize(creds)
+
+    # スプレッドシートを開く（IDを書き換えてください）
+    spreadsheet_id = "1UVIyyzNLcigP-NvVHJAHY4Z-jReWMdl0HUzul6vi7FA"
+    sheet = client.open_by_key(spreadsheet_id).worksheet("settings")
+
+    data = sheet.get_all_records()
+
+    # 各項目を整理して辞書にまとめる
+    settings = {
+        "token": next((d["内容1"] for d in data if d["項目"] == "LINE_TOKEN"), None),
+        "dest_list": [d["内容1"] for d in data if d["項目"] == "LINE_DEST"],
+        "members": {d["内容1"]: d["内容2"] for d in data if d["項目"] == "PUSH_MEMBER"},
+    }
+    return settings
+
+
+settings = get_settings_from_sheet()
+CHANNEL_ACCESS_TOKEN = settings["token"]
+USER_ID = settings["dest_list"]
 LAST_TITLE_FILE = "last_title.txt"
 
 configuration = Configuration(access_token=CHANNEL_ACCESS_TOKEN)
