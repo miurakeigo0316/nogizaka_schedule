@@ -86,6 +86,8 @@ try:
     new_messages = []
     current_latest_title = ""
 
+    BASE_URL = "https://sakurazaka46.com"
+
     for i, news in enumerate(news_items):
         title_element = news.find("p", {"class": "lead"})
         if not title_element:
@@ -110,6 +112,8 @@ try:
 
         content = news.find("p", {"class": "type"}).text.strip()
         link = news.find("a")["href"]
+        if not link.startswith("http"):
+            link = BASE_URL + link
 
         new_messages.append(
             f"【櫻坂46 新着】\n\n📅 {date_str}\n🏷 {content}\n📢 {title}\n🔗 {link}"
