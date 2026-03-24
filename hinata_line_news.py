@@ -98,7 +98,7 @@ try:
     BASE_URL = "https://www.hinatazaka46.com"
 
     for i, news in enumerate(news_items):
-        title_element = news.find("div", {"class": "c-news__category"})
+        title_element = news.find("p", {"class": "c-news__text"})
         if not title_element:
             continue
         title = title_element.text.strip()
@@ -119,7 +119,7 @@ try:
         except:
             pass
 
-        content = news.find("p", {"class": "c-news__text"}).text.strip()
+        content = news.find("div", {"class": "c-news__category"}).text.strip()
         link = news.find("a")["href"]
         if not link.startswith("http"):
             link = BASE_URL + link
@@ -140,7 +140,7 @@ try:
             reversed(latest_5_posts)
         )
         # # 古い順に並び替えて、区切り線で合体させる
-        # combined_message = "【日向坂46 新着まとめ】\n" + "\n\n---\n\n".join(
+        # combined_message = "【櫻坂46 新着まとめ】\n" + "\n\n---\n\n".join(
         #     reversed(new_messages)
         # )
 
