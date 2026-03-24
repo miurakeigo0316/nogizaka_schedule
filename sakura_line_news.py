@@ -81,6 +81,8 @@ try:
     soup = BeautifulSoup(driver.page_source, "html.parser")
     news_items = soup.find_all("ul", {"class": "com-news-part"})
 
+    print(f"ニュース要素の数: {len(news_items)}")
+
     new_messages = []
     current_latest_title = ""
 
@@ -112,6 +114,8 @@ try:
         new_messages.append(
             f"【櫻坂46 新着】\n\n📅 {date_str}\n🏷 {content}\n📢 {title}\n🔗 {link}"
         )
+
+    print(f"取得したメッセージ数: {len(new_messages)}")
 
     if new_messages:
         # 最新の5件だけに絞る
