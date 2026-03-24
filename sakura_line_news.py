@@ -37,7 +37,9 @@ def get_settings_from_sheet():
 
     # 各項目を整理して辞書にまとめる
     settings = {
-        "token": next((d["内容1"] for d in data if d["項目"] == "LINE_TOKEN"), None),
+        "token": next(
+            (d["内容1"] for d in data if d["項目"] == "LINE_TOKEN_SAKURA"), None
+        ),
         "dest_list": [d["内容1"] for d in data if d["項目"] == "LINE_DEST"],
         "members": {d["内容1"]: d["内容2"] for d in data if d["項目"] == "PUSH_MEMBER"},
     }
