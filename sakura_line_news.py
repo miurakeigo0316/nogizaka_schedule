@@ -1,6 +1,10 @@
 import os
 import datetime
-import time
+
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
@@ -77,9 +81,14 @@ driver = webdriver.Chrome(
 
 try:
     driver.get("https://sakurazaka46.com/s/s46/news/list?ima=1000")
-    time.sleep(10)  # 読み込み待機
+    WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.CLASS_NAME, "com-news-part"))
+    )
     soup = BeautifulSoup(driver.page_source, "html.parser")
-    news_items = soup.find_all("ul", {"class": "com-news-part"})
+
+    news_list_ul = soup.find("ul", {"class": "com-news-part"})
+
+    news_items = news_list_ul.find_all("li", recursive=False)
 
     print(f"ニュース要素の数: {len(news_items)}")
 
