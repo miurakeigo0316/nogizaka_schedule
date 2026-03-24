@@ -76,7 +76,7 @@ driver = webdriver.Chrome(
 )
 
 try:
-    driver.get("https://www.nogizaka46.com/s/n46/news/list?ima=1000")
+    driver.get("https://sakurazaka46.com/s/s46/news/list?ima=0000")
     time.sleep(10)  # 読み込み待機
     soup = BeautifulSoup(driver.page_source, "html.parser")
     news_items = soup.find_all("li", {"class": "newsItem"})
@@ -85,7 +85,7 @@ try:
     current_latest_title = ""
 
     for i, news in enumerate(news_items):
-        title_element = news.find("div", {"class": "ttl"})
+        title_element = news.find("p", {"class": "lead"})
         if not title_element:
             continue
         title = title_element.text.strip()
@@ -98,7 +98,7 @@ try:
             break
 
         # 日付チェック（1週間以内）
-        date_str = news.find("p", {"class": "data"}).text.strip()
+        date_str = news.find("p", {"class": "date"}).text.strip()
         try:
             news_date = datetime.datetime.strptime(date_str, "%Y.%m.%d")
             if news_date < one_week_ago:
@@ -106,11 +106,11 @@ try:
         except:
             pass
 
-        content = news.find("p", {"class": "cat_name"}).text.strip()
+        content = news.find("p", {"class": "type"}).text.strip()
         link = news.find("a")["href"]
 
         new_messages.append(
-            f"【乃木坂46 新着】\n\n📅 {date_str}\n🏷 {content}\n📢 {title}\n🔗 {link}"
+            f"【櫻坂46 新着】\n\n📅 {date_str}\n🏷 {content}\n📢 {title}\n🔗 {link}"
         )
 
     if new_messages:
@@ -119,11 +119,11 @@ try:
 
         # LINEで読みやすいように「古い順」に並べて合体（一番下が最新になる）
         # もし一番上を最新にしたい場合は reversed() を外して latest_5_posts をそのまま使う
-        combined_message = "【乃木坂46 新着まとめ (最新5件)】\n\n" + "\n\n---\n\n".join(
+        combined_message = "【櫻坂46 新着まとめ (最新5件)】\n\n" + "\n\n---\n\n".join(
             reversed(latest_5_posts)
         )
         # # 古い順に並び替えて、区切り線で合体させる
-        # combined_message = "【乃木坂46 新着まとめ】\n" + "\n\n---\n\n".join(
+        # combined_message = "【櫻坂46 新着まとめ】\n" + "\n\n---\n\n".join(
         #     reversed(new_messages)
         # )
 
