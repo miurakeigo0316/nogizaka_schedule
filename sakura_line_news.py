@@ -76,10 +76,10 @@ driver = webdriver.Chrome(
 )
 
 try:
-    driver.get("https://sakurazaka46.com/s/s46/news/list?ima=0000")
+    driver.get("https://sakurazaka46.com/s/s46/news/list?ima=1000")
     time.sleep(10)  # 読み込み待機
     soup = BeautifulSoup(driver.page_source, "html.parser")
-    news_items = soup.find_all("li", {"class": "newsItem"})
+    news_items = soup.find_all("ul", {"class": "com-news-part"})
 
     new_messages = []
     current_latest_title = ""
