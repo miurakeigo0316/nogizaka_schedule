@@ -131,10 +131,9 @@ try:
 finally:
     driver.quit()
 
-
+gcal_data = []
 # --- Googleカレンダー用CSV出力 ---
 if all_data:
-    gcal_data = []
     for item in all_data:
         # 日付の整形 (例: "15(月)" -> "2026/03/15")
         day_only = item["日付"].split("(")[0]
