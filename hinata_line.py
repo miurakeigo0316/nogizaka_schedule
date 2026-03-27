@@ -78,6 +78,7 @@ url = f"https://www.hinatazaka46.com/s/official/media/list?ima=0000&dy={year}{mo
 driver.get(url)
 
 all_data = []
+BASE_URL = "https://www.hinatazaka46.com"
 
 try:
     # スケジュール全体を包む要素（sc--day）が表示されるまで待機
@@ -103,6 +104,10 @@ try:
         items = d.find_all("li", class_="p-schedule__item")
 
         for item in items:
+            # リンク取得
+            link = item.find("a")["href"]
+            if not link.startswith("http"):
+                link = BASE_URL + link
             # 時刻タグの取得
             time_tag = item.find("div", class_="c-schedule__time--list")
             time = time_tag.get_text(strip=True) if time_tag else ""
@@ -128,7 +133,9 @@ try:
                     "日付": full_date,
                     "媒体": content,
                     "タイトル": title,
-                    "時間": time,  # timeが空でも列として作成される
+                    "時間": time,
+                    "リンク": link,
+                    # timeが空でも列として作成される
                 }
             )
 finally:
@@ -184,6 +191,7 @@ if all_data:
                 "End Time": end_time,
                 "All Day Event": all_day,
                 "Description": item["媒体"],
+                "Link": link,
             }
         )
 
