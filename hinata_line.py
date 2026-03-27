@@ -191,7 +191,7 @@ if all_data:
                 "End Time": end_time,
                 "All Day Event": all_day,
                 "Description": item["媒体"],
-                "Link": link,
+                "Link": item["リンク"],
             }
         )
 
