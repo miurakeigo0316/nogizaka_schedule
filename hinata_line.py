@@ -92,6 +92,7 @@ try:
     days = soup.find_all("div", class_="p-schedule__list-group")
 
     for d in days:
+        day_block = d.find("div", class_="p-schedule__date--list")
         day_text = d.find("span").get_text(strip=True)
         week_text = d.find("b").get_text(strip=True)
 
@@ -99,7 +100,7 @@ try:
         full_date = f"{day_text}({week_text})"
 
         # その日の中にある各スケジュール項目を取得
-        items = d.find_all("li", class_="p-schedule__list")
+        items = d.find_all("li", class_="p-schedule__item")
 
         for item in items:
             # 時刻タグの取得
@@ -110,7 +111,9 @@ try:
             # if not time:
             #    continue
 
-            content = item.find("p", class_="c-schedule__category").get_text(strip=True)
+            content = item.find("div", class_="c-schedule__category").get_text(
+                strip=True
+            )
             title = item.find("p", class_="c-schedule__text").get_text(strip=True)
 
             # print(f"日付: {full_date})")
