@@ -74,7 +74,7 @@ year = today.strftime("%Y")
 month = today.strftime("%m")
 
 # URLにクエリパラメータを正しく渡す
-url = f"https://www.nogizaka46.com/s/n46/media/list?ima=1000&dy={year}{month}&lang=ja"
+url = f"https://www.hinatazaka46.com/s/official/media/list?ima=0000&dy={year}{month}&lang=ja"
 driver.get(url)
 
 all_data = []
@@ -89,29 +89,29 @@ try:
     soup = BeautifulSoup(html, "html.parser")
 
     # 日付ごとのブロックを取得（これで日付順が保証されます）
-    days = soup.find_all("div", class_="sc--day")
+    days = soup.find_all("div", class_="p-schedule__list-group")
 
     for d in days:
-        day_text = d.find("p", class_="sc--day__d").get_text(strip=True)
-        week_text = d.find("p", class_="sc--day__w").get_text(strip=True)
+        day_text = d.find("span").get_text(strip=True)
+        week_text = d.find("b").get_text(strip=True)
 
         # 「日付(曜日)」の形に整える
         full_date = f"{day_text}({week_text})"
 
         # その日の中にある各スケジュール項目を取得
-        items = d.find_all("div", class_="m--scone")
+        items = d.find_all("li", class_="p-schedule__list")
 
         for item in items:
             # 時刻タグの取得
-            time_tag = item.find("p", class_="m--scone__st")
+            time_tag = item.find("div", class_="c-schedule__time--list")
             time = time_tag.get_text(strip=True) if time_tag else ""
 
             # 【追加】時刻がない（空文字）の場合は出力せずにスキップ
             # if not time:
             #    continue
 
-            content = item.find("p", class_="m--scone__cat__name").get_text(strip=True)
-            title = item.find("p", class_="m--scone__ttl").get_text(strip=True)
+            content = item.find("p", class_="c-schedule__category").get_text(strip=True)
+            title = item.find("p", class_="c-schedule__text").get_text(strip=True)
 
             # print(f"日付: {full_date})")
             # if time:
@@ -184,32 +184,10 @@ if all_data:
             }
         )
 
-#     # CSV出力（以下は前回と同じ）
-#     # --- Googleカレンダー用CSV出力 ---
-#     df_gcal = pd.DataFrame(gcal_data)
-
-#     # 1. ファイル名を固定にする（これで実行のたびに同じファイルが更新される）
-#     filename_csv = "gcal_import_now.csv"
-
-#     # 2. カラム順を整理
-#     columns = ["Subject", "Start Date", "Start Time", "End Date", "End Time",
-# "All Day Event", "Description"]
-
-#     # mode='w' (writeモード) はデフォルトですが、明示的に上書きを指定
-#     # encoding='utf-8-sig' はExcelで文字化けさせないため
-#     df_gcal[columns].to_csv(filename_csv, index=False, encoding="utf-8-sig", mode='w')
-
-#     print("-" * 20)
-#     print(f"Googleカレンダー用CSVを更新しました: {filename_csv}")
-#     print("このファイルをGoogleカレンダーにインポートしてください。")
-
-
-# --- Googleカレンダー登録処理 ---
-
 
 def register_to_google_calendar(service, gcal_data):
     # 【重要】ここに新しいカレンダーIDを貼り付けてください
-    target_id = os.environ.get("GOOGLE_CALENDAR_ID_NOGI")
+    target_id = os.environ.get("GOOGLE_CALENDAR_ID_HINATA")
     # --- 1. 既存の予定をリストアップ ---
     # 過去7日から未来30日分を取得（深夜番組や日付変更のズレを確実にカバー）
     time_min = (

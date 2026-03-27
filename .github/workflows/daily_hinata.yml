@@ -1,0 +1,31 @@
+name: Daily Hinata Schedule
+
+on:
+  schedule:
+    # 毎日 23:50 (日本時間) に実行
+    # UTC（世界標準時）なので 9時間引いて 14:50 に設定
+    - cron: "50 14 * * *"
+  workflow_dispatch: # 手動で実行ボタンを押せるようにする
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install selenium beautifulsoup4 pandas line-bot-sdk webdriver-manager google-api-python-client google-auth-httplib2 google-auth-oauthlib gspread
+
+      - name: Run script
+        env:
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          SPREADSHEET_ID: ${{ secrets.SPREADSHEET_ID }}
+        run: python hinata_line.py
