@@ -40,7 +40,7 @@ def get_settings_from_sheet():
 
     # 整理して返す
     settings = {
-        "token": next(d["内容1"] for d in data if d["項目"] == "LINE_TOKEN"),
+        "token": next(d["内容1"] for d in data if d["項目"] == "LINE_TOKEN_HINATA"),
         # LINE_DEST の行から「内容1」をすべてリストで取る（複数対応）
         "dest_list": [d["内容1"] for d in data if d["項目"] == "LINE_DEST"],
         "members": {d["内容1"]: d["内容2"] for d in data if d["項目"] == "PUSH_MEMBER"},
@@ -325,9 +325,6 @@ def print_tomorrow_schedule(gcal_data):
 
 def send_line_message_api(gcal_data, settings):
     # --- 設定（LINE Developersから取得した値を入力） ---
-    # token = settings["token"]
-    # dest_list = settings["dest_list"]
-    # push_members = settings["members"]
 
     token = settings.get("token")
     dest_list = settings.get("dest_list")
