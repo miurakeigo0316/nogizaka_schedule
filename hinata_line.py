@@ -365,6 +365,7 @@ def send_line_message_api(gcal_data, settings):
             time_str = "終日" if data["All Day Event"] == "True" else data["Start Time"]
             subject = data["Subject"]  # ← ここ！直接取り出せば日本語になります
             description = data["Description"]
+            url = data.get("Link", "")
 
             # 推しメン判定
             matched_emoji = ""
@@ -379,7 +380,11 @@ def send_line_message_api(gcal_data, settings):
             if matched_emoji:
                 subject = f"{matched_emoji}【推し】{subject}"
 
-            msg_text += f"\n・{time_str}〜\n  {subject}\n"
+            # --- メッセージ本文にURLを追加 ---
+            msg_text += f"\n・{time_str}〜\n  {subject}"
+            if url:
+                msg_text += f"\n  {url}"  # ← ここでURLを改行して追加
+            msg_text += "\n"
 
     if found_count == 0:
         msg_text += "\n明日の予定はありません。"
