@@ -82,7 +82,7 @@ all_data = []
 try:
     # スケジュール全体を包む要素（sc--day）が表示されるまで待機
     WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CLASS_NAME, "sc--day"))
+        EC.presence_of_element_located((By.CLASS_NAME, "p-schedule__list-group"))
     )
 
     html = driver.page_source
