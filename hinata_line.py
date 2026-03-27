@@ -352,7 +352,7 @@ def send_line_message_api(gcal_data, settings):
     tomorrow_str = tomorrow_dt.strftime("%Y-%m-%d")
 
     # 2. メッセージ本文の作成
-    msg_text = f"【明日 {tomorrow_dt.strftime('%m/%d')} の乃木坂46】\n"
+    msg_text = f"【明日 {tomorrow_dt.strftime('%m/%d')} の日向坂46】\n"
 
     found_count = 0
     # send_line_message_api 関数の中をチェック
@@ -365,7 +365,7 @@ def send_line_message_api(gcal_data, settings):
             time_str = "終日" if data["All Day Event"] == "True" else data["Start Time"]
             subject = data["Subject"]  # ← ここ！直接取り出せば日本語になります
             description = data["Description"]
-            url = data.get("Link", "")
+            url = data["Link"]
 
             # 推しメン判定
             matched_emoji = ""
