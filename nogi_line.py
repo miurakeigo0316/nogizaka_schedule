@@ -112,6 +112,7 @@ try:
 
             content = item.find("p", class_="m--scone__cat__name").get_text(strip=True)
             title = item.find("p", class_="m--scone__ttl").get_text(strip=True)
+            link = item.find("a")["href"] if item.find("a") else ""
 
             # print(f"日付: {full_date})")
             # if time:
@@ -126,6 +127,7 @@ try:
                     "媒体": content,
                     "タイトル": title,
                     "時間": time,  # timeが空でも列として作成される
+                    "リンク": link,
                 }
             )
 finally:
@@ -180,6 +182,7 @@ if all_data:
                 "End Time": end_time,
                 "All Day Event": all_day,
                 "Description": item["媒体"],
+                "Link": item["リンク"],
             }
         )
 
@@ -378,6 +381,7 @@ def send_line_message_api(gcal_data, settings):
             time_str = "終日" if data["All Day Event"] == "True" else data["Start Time"]
             subject = data["Subject"]  # ← ここ！直接取り出せば日本語になります
             description = data["Description"]
+            url = data["Link"]
 
             # 推しメン判定
             matched_emoji = ""
@@ -393,6 +397,9 @@ def send_line_message_api(gcal_data, settings):
                 subject = f"{matched_emoji}【推し】{subject}"
 
             msg_text += f"\n・{time_str}〜\n  {subject}\n"
+            if url:
+                msg_text += f"\n  {url}"  # ← ここでURLを改行して追加
+            msg_text += "\n"
 
     if found_count == 0:
         msg_text += "\n明日の予定はありません。"
