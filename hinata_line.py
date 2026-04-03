@@ -147,7 +147,7 @@ if all_data:
 
     for item in all_data:
         # 日付の整形 (例: "15(月)" -> "2026/03/15")
-        day_only = item["日付"].split("(")[0]
+        day_only = item["日付"].split("(")[0].zfill(2)
         start_date = f"{year}/{month}/{day_only}"
 
         subject = f"[{item['媒体']}] {item['タイトル']}"
