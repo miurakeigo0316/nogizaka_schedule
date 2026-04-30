@@ -69,9 +69,9 @@ driver = webdriver.Chrome(
     service=Service(ChromeDriverManager().install()), options=options
 )
 
-today = datetime.date.today()
-year = today.strftime("%Y")
-month = today.strftime("%m")
+tomorrow_dt = datetime.date.today() + datetime.timedelta(days=1)
+year = tomorrow_dt.strftime("%Y")
+month = tomorrow_dt.strftime("%m")
 
 # URLにクエリパラメータを正しく渡す
 url = f"https://www.nogizaka46.com/s/n46/media/list?ima=1000&dy={year}{month}&lang=ja"
